@@ -1,0 +1,27 @@
+{
+	"name": "magtiny/magtiny-framework",
+	"description": "The Magtiny Framework Core Package",
+	"keywords": ["framework", "magtiny"],
+	"license": "MIT",
+	"type": "package",
+	"authors": [
+		{
+			"name": "Clark Yanwei Zhao",
+			"email": "zhaoyanwei@shinetechchina.com",
+			"role": "developer"
+		}
+	],
+	"require": {
+		"php": ">=7.0.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"magtiny\\": "lib/"
+		}
+	},
+	"config": {
+		"preferred-install": "dist",
+		"sort-packages": true,
+		"optimize-autoloader": true
+	}
+}
