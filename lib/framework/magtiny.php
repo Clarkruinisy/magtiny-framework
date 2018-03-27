@@ -5,10 +5,14 @@ namespace magtiny\framework;
 
 final class magtiny
 {
-	public static function startKernal ()
+	public static function startServer ()
 	{
-		echo "kernal started";
 		error_reporting(E_ALL);
+
+		if (!defined("MAGTINY_APP_PATH")) {
+			// app path not defined exception
+
+		}
 
 		// error handler register
 
@@ -16,18 +20,8 @@ final class magtiny
 
 		// session resister
 
-		if (!defined("MAGTINY_APP_PATH")) {
-			// app path not defined exception
-
-		}
-	}
-
-	public static function startServer ()
-	{
-		echo "server started";
-		$router = router::parse("PATH_INFO");
-		// $result = (new $router->controller)->{$router->action};
-		// $format = config::config("format");
-		// render::$format($result);
+		$router = router::parse();
+		$result = (new $router->controller)->{$router->action}();
+		render::response($result);
 	}
 }

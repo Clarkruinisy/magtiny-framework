@@ -11,26 +11,26 @@ final class globals
 	{
 		$globalKey = '_' . strtoupper($method);
 		if ('_SERVER' === $globalKey and !isset($GLOBALS[$globalKey])) {
-			$GLOBALS[$globalKey] = $_SERVER;
+			$_SERVER;
 		}
+		$paramKey = current($argument);
 		if (!isset(static::$globals[$globalKey])){
 			if (!isset($GLOBALS[$globalKey])){
 				// globals key not exist exception
-
+				die("globals key not exist");
 			}
-			static::$globals[$globalKey] = $GLOBALS[$globalKey];
-			// $filters=next($argument)?:Config::config('filter');
-			// static::$globals[$globalKey]=Filter::handle($GLOBALS[$globalKey],$filters);
+			// static::$globals[$globalKey] = $GLOBALS[$globalKey];
+			$filters= ($filters = next($argument)) ? $filters : config::config('filters');
+			// var_dump($filters); die;
+			static::$globals[$globalKey]=filter::handle($GLOBALS[$globalKey], $filters);
 		}
-		$paramKey = current($argument);
+		// var_dump($paramKey);die;
 		if (!$paramKey){
 			return static::$globals[$globalKey];
 		}
 		if (isset(static::$globals[$globalKey][$paramKey])){
 			return static::$globals[$globalKey][$paramKey];
 		}
-		// globals key parameter key not exist exception
-		
-	}	
-
+		return null;
+	}
 }
