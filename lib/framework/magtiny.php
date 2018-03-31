@@ -7,19 +7,10 @@ final class magtiny
 {
 	public static function startServer ()
 	{
+		set_error_handler(["\\magtiny\\framework\\debugger", "handleError"]);
+		set_exception_handler(["\\magtiny\\framework\\debugger", "handleException"]);
 		error_reporting(E_ALL);
-
-		if (!defined("MAGTINY_APP_PATH")) {
-			// app path not defined exception
-
-		}
-
-		// error handler register
-
-		// exception handler register
-
-		// session resister
-
+		session::pareper();
 		$router = router::parse();
 		$result = (new $router->controller)->{$router->action}();
 		render::response($result);

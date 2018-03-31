@@ -10,15 +10,14 @@ final class router
 	public static function parse ()
 	{
 		if (is_null(static::$router)) {
-			$defaultRouter = config::config("router");
-			$pathInfo = globals::server("PATH_INFO");
 
-			$pathInfoArray = explode("/", $pathInfo);
-			array_shift($pathInfoArray);
-			$routerArray = ["app"];
-			if (!isset($defaultRouter) or count($defaultRouter) < 2) {
-				// default router not not exists or length should not be lt 2 exception
-				die("default router not not exists or length should not be lt 2 exception");
+			$parseFrom = config::router("parse");
+			$pathInfoArray = explode("/", globals::server($parseFrom));
+			$pathInfoArray[0] = config::config("path");
+
+			$defaultRouter = config::router("default");
+			if (!isset($defaultRouter) or count($defaultRouter) < 3) {
+				debugger::throwException(106, render::json($defaultRouter));
 			}
 			foreach ($defaultRouter as $value) {
 				$routerArray[] = ($path = array_shift($pathInfoArray)) ? $path : $value;
@@ -28,20 +27,18 @@ final class router
 					$routerArray[] = $value;
 				}
 			}
-			$router = new \stdClass;
-			$router->action = array_pop($routerArray);
-			$router->classname = array_pop($routerArray);
-			$router->namespace = "\\" . implode("\\", $routerArray) . "\\controller";
-			$router->controller = $router->namespace . "\\" . $router->classname;
-			if (!class_exists($router->controller)) {
-				// router class not exists exception
-				die("router class not exists exception");
+			static::$router = new \stdClass;
+			static::$router->action = array_pop($routerArray);
+			static::$router->classname = array_pop($routerArray);
+			static::$router->namespace = "\\".implode("\\", $routerArray)."\\".config::router("dir")."\\";
+			static::$router->controller = static::$router->namespace.static::$router->classname;
+			if (!class_exists(static::$router->controller)) {
+				debugger::throwException(107, static::$router->controller);
 			}
-			if (!method_exists($router->controller, $router->action)) {
-				// router method not exist exception
-				die("router method not exist exception");
+			if (!method_exists(static::$router->controller, static::$router->action)) {
+				debugger::throwException(108, static::$router->action);
 			}
 		}
-		return $router;
+		return static::$router;
 	}
 }

@@ -16,12 +16,12 @@ class controller
 				$this->assign[$k] = $v;
 			}
 		}else{
-			die("assign key not right exception");
+			debugger::throwException(102, render::json($key));
 		}
 	}
 
 	final protected function view ($view = "") {
-		$view = $view ? $view : router::parse()->action;
-		echo __DIR__;
+		$file = view::fetchFile($view);
+		return (new view($file, $this->assign))->fetch();
 	}
 }
