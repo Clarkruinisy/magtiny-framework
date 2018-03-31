@@ -5,12 +5,18 @@ namespace magtiny\framework;
 
 final class debugger extends \exception
 {
-	public static function throwException ($code = 0, $extra = "")
+	public static function fetchException ($code = 0 ,$extra = "")
 	{
-		$exceptionMessage = config::exception()[$code];
+		$exceptionMessage = config::exception($code);
 		if ($extra) {
 			$exceptionMessage.= "[ ".$extra." ]";
 		}
+		return $exceptionMessage;
+	}
+
+	public static function throwException ($code = 0, $extra = "")
+	{
+		$exceptionMessage = static::fetchException($code, $extra);
 		throw new static($exceptionMessage, $code);
 	}
 
