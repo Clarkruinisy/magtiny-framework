@@ -10,7 +10,8 @@ final class globals
 	public static function input ($key = "", $filters = [])
 	{
 		if (!isset(static::$globals[__FUNCTION__])) {
-			$input = json_decode(file_get_contents("php://input"), true) ?? [];
+			$input = json_decode(file_get_contents("php://input"), true);
+			$input = $input ? $input : [];
 			$filters= $filters ? $filters : config::config('safeFiltersFuncs');
 			$input = filter::handle($input, $filters);
 			static::$globals[__FUNCTION__] = array_merge($input, static::post());
