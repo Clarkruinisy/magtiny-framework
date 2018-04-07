@@ -5,9 +5,9 @@ namespace magtiny\framework;
 
 class session
 {
-	public static function pareper ()
+	public static function prepare ()
 	{
-		if (config::session("start")) {
+		if (config::config("sessionAutoStart")) {
 			static::start();
 		}
 	}
@@ -22,9 +22,9 @@ class session
 		if (static::started()) {
 			debugger::throwException(110);
 		}
-		$config = config::session();
-		if ("cookie" !== config::session("method")) {
-			$sessionID = globals::{config::session("method")}(config::session("key"));
+		$sessionUse = config::config("sessionUse");
+		if ("cookie" !== $sessionUse) {
+			$sessionID = globals::$sessionUse(config::config("sessionKey"));
 			session_id($sessionID);
 		}
 		session_start();
@@ -61,3 +61,4 @@ class session
 		session_destroy();
 	}
 }
+

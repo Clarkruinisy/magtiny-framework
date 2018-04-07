@@ -16,12 +16,32 @@ class controller
 				$this->assign[$k] = $v;
 			}
 		}else{
-			debugger::throwException(102, render::json($key));
+			debugger::throwException(102, json_encode($key));
 		}
 	}
 
-	final protected function view ($view = "") {
+	final protected function view ($view = "")
+	{
 		$file = view::fetchFile($view);
-		return (new view($file, $this->assign))->fetch();
+		$viewInstance = new view($file, $this->assign);
+		return $viewInstance->fetch();
+	}
+
+	final protected function render ($code = 10000, $success = false, $data = [])
+	{
+		$message = config::message($code);
+		if (is_null($message)) {
+			$router = router::parse();
+			$message = "Send HTTP request to router";
+			$message.= " [ ".$router->classname.'/'.$router->action." ] ";
+			$message.= $success ? "success" : "failed";
+		}
+		return [
+			"success" => $success,
+			"code" =>$code,
+			"message" => $message,
+			"data" => $data,
+		];
 	}
 }
+

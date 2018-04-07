@@ -14,11 +14,11 @@ final class filter
 				if (is_string($filter) and function_exists($filter)) {
 					$data = static::treeHandle($data,$filter);
 				}else{
-					debugger::throwException(103, render::json($filter));
+					debugger::throwException(103, json_encode($filter));
 				}
 			}
 		}else{
-			debugger::throwException(103, render::json($filter));
+			debugger::throwException(103, json_encode($filter));
 		}
 		return $data;
 	}
@@ -41,3 +41,4 @@ final class filter
 		return $data;
 	}
 }
+

@@ -12,16 +12,16 @@ final class view
 		$this->view = [
 			"file"		=> $file,
 			"assign"	=> $assign,
-			'include'	=> config::view("include"),
-			'pattern'	=> config::view("pattern"),
+			'include'	=> config::config("viewIncludeRegular"),
+			'pattern' 	=> config::config("viewInlcudePattern"),
 		];
 	}
 
 	public static function fetchFile ($view = "")
 	{
 		$view = $view ? $view : router::parse()->action;
-		$controllerSpace = "\\".config::router("dir")."\\";
-		$viewSpace = "\\".config::view("dir");
+		$controllerSpace = "\\".config::config("routerDirName")."\\";
+		$viewSpace = "\\".config::config("viewDirName");
 		if ($pos = strpos($view, "/")) {
 			$path = str_replace($controllerSpace, $viewSpace."\\", router::parse()->namespace);
 		}elseif ($pos === 0) {
@@ -29,7 +29,7 @@ final class view
 		}else{
 			$path = str_replace($controllerSpace, $viewSpace."\\", router::parse()->controller);
 		}
-		$file = getcwd()."/..".str_replace("\\", "/", $path)."/".$view.".".config::view("extension");
+		$file = getcwd()."/..".str_replace("\\", "/", $path)."/".$view.".".config::config("viewExtension");
 		if (!is_file($file)) {
 			debugger::throwException(109, $file);
 		}
@@ -45,7 +45,7 @@ final class view
 		include $this->view['file'];
 		$this->view['content'] = ob_get_contents();
 		ob_clean();
-		while ($x = preg_match_all($this->view['include'], $this->view['content'], $this->view['matches'])) {
+		while (preg_match_all($this->view['include'], $this->view['content'], $this->view['matches'])) {
 			foreach ($this->view['matches'][0] as $k => $this->view['match']) {
 				preg_match($this->view['pattern'], $this->view['match'], $this->view['name'][$k]);
 				include static::fetchFile(trim($this->view['name'][$k][0], "\""));
@@ -58,3 +58,4 @@ final class view
 		return $this->view['content'];
 	}
 }
+

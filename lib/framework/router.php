@@ -11,13 +11,13 @@ final class router
 	{
 		if (is_null(static::$router)) {
 
-			$parseFrom = config::router("parse");
+			$parseFrom = config::config("routerParseFrom");
 			$pathInfoArray = explode("/", globals::server($parseFrom));
-			$pathInfoArray[0] = config::config("path");
+			$pathInfoArray[0] = config::config("applicationPath");
 
-			$defaultRouter = config::router("default");
+			$defaultRouter = explode("/", config::config("defaultRouter"));
 			if (!isset($defaultRouter) or count($defaultRouter) < 3) {
-				debugger::throwException(106, render::json($defaultRouter));
+				debugger::throwException(106, json_encode($defaultRouter));
 			}
 			foreach ($defaultRouter as $value) {
 				$routerArray[] = ($path = array_shift($pathInfoArray)) ? $path : $value;
@@ -30,7 +30,7 @@ final class router
 			static::$router = new \stdClass;
 			static::$router->action = array_pop($routerArray);
 			static::$router->classname = array_pop($routerArray);
-			static::$router->namespace = "\\".implode("\\", $routerArray)."\\".config::router("dir")."\\";
+			static::$router->namespace = "\\".implode("\\", $routerArray)."\\".config::config("routerDirName")."\\";
 			static::$router->controller = static::$router->namespace.static::$router->classname;
 			if (!class_exists(static::$router->controller)) {
 				debugger::throwException(107, static::$router->controller);
@@ -42,3 +42,4 @@ final class router
 		return static::$router;
 	}
 }
+

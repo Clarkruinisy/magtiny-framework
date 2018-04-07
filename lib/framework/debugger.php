@@ -7,9 +7,9 @@ final class debugger extends \exception
 {
 	public static function fetchException ($code = 0 ,$extra = "")
 	{
-		$exceptionMessage = config::exception($code);
+		$exceptionMessage = config::config("magtinyExceptions")[$code];
 		if ($extra) {
-			$exceptionMessage.= "[ ".$extra." ]";
+			$exceptionMessage.= " [ ".$extra." ]";
 		}
 		return $exceptionMessage;
 	}
@@ -36,10 +36,11 @@ final class debugger extends \exception
 		if (config::config("debug")) {
 			$template = ["{{message}}", "{{file}}", "{{line}}"];
 			$replace = [$message, $file, $line];
-			$error.= str_replace($template, $replace, config::config("errorTemplate"));
+			$error.= str_replace($template, $replace, config::config("errorTempateMessage"));
 		}else{
-			$error.= config::config("errorIgnore");
+			$error.= config::config("errorIgnoreMessage");
 		}
-		echo render::view($error);
+		echo $error;
 	}
 }
+

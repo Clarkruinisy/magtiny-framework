@@ -7,6 +7,23 @@ final class globals
 {
 	public static $globals=[];
 
+	public static function input ($key = "", $filters = [])
+	{
+		if (!isset(static::$globals[__FUNCTION__])) {
+			$input = json_decode(file_get_contents("php://input"), true) ?? [];
+			$filters= $filters ? $filters : config::config('safeFiltersFuncs');
+			$input = filter::handle($input, $filters);
+			static::$globals[__FUNCTION__] = array_merge($input, static::post());
+		}
+		if (!$key) {
+			return static::$globals[__FUNCTION__];
+		}
+		if (isset(static::$globals[__FUNCTION__][$key])) {
+			return static::$globals[__FUNCTION__][$key];
+		}
+		return null;
+	}
+
 	public static function __callStatic($method='', $argument=[])
 	{
 		$globalKey = '_' . strtoupper($method);
@@ -18,7 +35,8 @@ final class globals
 			if (!isset($GLOBALS[$globalKey])) {
 				debugger::throwException(104, $globalKey);
 			}
-			$filters= ($filters = next($argument)) ? $filters : config::config('filters');
+			$customFilters = next($argument);
+			$filters = $customFilters ? $customFilters : config::config('safeFiltersFuncs');
 			static::$globals[$globalKey] = filter::handle($GLOBALS[$globalKey], $filters);
 		}
 		if (!$paramKey) {
@@ -30,3 +48,4 @@ final class globals
 		return null;
 	}
 }
+

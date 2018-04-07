@@ -51,3 +51,4 @@ class model
 		debugger::throwException(105, $method);
 	}
 }
+

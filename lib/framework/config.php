@@ -9,11 +9,19 @@ final class config
 
 	private static function readConfigFile ($fileName = "config")
 	{
-		$configFile = getcwd()."/../config/".$fileName.".php";
-		if (!is_file($configFile)) {
-			debugger::throwException(100, $configFile);
+		$appConfigFile = getcwd()."/../config/".$fileName.".php";
+		if ("config" === $fileName) {
+			$magtinyConfigFile = __DIR__."/../config.php";
+			$magtinyConfig = include $magtinyConfigFile;
+			if (is_file($appConfigFile)) {
+				$appConfig = include $appConfigFile;
+				return array_merge($magtinyConfig, $appConfig);
+			}
+			return $magtinyConfig;
+		}elseif (is_file($appConfigFile)) {
+			return include $appConfigFile;
 		}
-		return include $configFile;
+		debugger::throwException(100, $appConfigFile);
 	}
 
 	public static function __callStatic ($method, $argument=[])
@@ -25,11 +33,13 @@ final class config
 		if (false === $configKey){
 			return static::$config[$method];
 		}
+		if (!is_string($configKey) and !is_numeric($configKey)) {
+			debugger::throwException(101, $configKey);
+		}
 		if (array_key_exists($configKey, static::$config[$method])){
 			return static::$config[$method][$configKey];
 		}
-		debugger::throwException(101, $method." => ".$configKey);
+		return null;
 	}
 }
-
 
