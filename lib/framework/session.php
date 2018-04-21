@@ -25,7 +25,9 @@ class session
 		$sessionUse = config::config("sessionUse");
 		if ("cookie" !== $sessionUse) {
 			$sessionID = globals::$sessionUse(config::config("sessionKey"));
-			session_id($sessionID);
+			if ($sessionID) {
+				session_id($sessionID);
+			}
 		}
 		session_start();
 	}
