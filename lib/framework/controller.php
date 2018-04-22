@@ -27,7 +27,7 @@ class controller
 		return $viewInstance->fetch();
 	}
 
-	final protected function render ($code = 10000, $success = false, $data = [])
+	final protected function render ($code = 10000, $success = false, $data = [], $extra = "")
 	{
 		$message = config::message($code);
 		if (is_null($message)) {
@@ -35,6 +35,9 @@ class controller
 			$message = "Send HTTP request to router";
 			$message.= " [ ".$router->classname.'/'.$router->action." ] ";
 			$message.= $success ? "success" : "failed";
+		}
+		if ($extra) {
+			$message.= " [ ".$extra." ].";
 		}
 		return [
 			"success" => $success,

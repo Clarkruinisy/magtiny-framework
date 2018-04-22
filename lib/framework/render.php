@@ -18,6 +18,9 @@ final class render
 		if (config::config("crossDomain")) {
 			header("Access-Control-Allow-Origin: ".config::config("domainName"));
 		}
+		if ("jwt" === config::config("sessionUse")) {
+			header("Access-Control-Allow-Headers: Authorization");
+		}
 		$contentType = config::config("contentType");
 		$charset = config::config("charset");
 		header("Content-Type: ".$contentType.";charset= ".$charset);

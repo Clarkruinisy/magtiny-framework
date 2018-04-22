@@ -7,9 +7,7 @@ class session
 {
 	public static function prepare ()
 	{
-		if (config::config("sessionAutoStart")) {
-			static::start();
-		}
+		static::start();
 	}
 
 	public static function started ()
@@ -23,7 +21,7 @@ class session
 			debugger::throwException(110);
 		}
 		$sessionUse = config::config("sessionUse");
-		if ("cookie" !== $sessionUse) {
+		if ("cookie" !== $sessionUse and "jwt" !==  $sessionUse) {
 			$sessionID = globals::$sessionUse(config::config("sessionKey"));
 			if ($sessionID) {
 				session_id($sessionID);

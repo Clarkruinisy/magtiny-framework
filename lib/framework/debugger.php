@@ -5,29 +5,20 @@ namespace magtiny\framework;
 
 final class debugger extends \exception
 {
-	public static function fetchException ($code = 0 ,$extra = "")
+	public static function prepare ()
 	{
-		$exceptionMessage = config::config("magtinyExceptions")[$code];
-		if ($extra) {
-			$exceptionMessage.= " [ ".$extra." ]";
-		}
-		return $exceptionMessage;
-	}
-
-	public static function throwException ($code = 0, $extra = "")
-	{
-		$exceptionMessage = static::fetchException($code, $extra);
-		throw new static($exceptionMessage, $code);
-	}
-
-	public static function handleException ($exception)
-	{
-		static::handle($exception->getMessage(), $exception->getFile(), $exception->getLine());
+		set_error_handler([__NAMESPACE__."\\debugger", "handleError"]);
+		set_exception_handler([__NAMESPACE__."\\debugger", "handleException"]);
 	}
 
 	public static function handleError ($errno, $errstr, $errfile, $errline)
 	{
 		static::handle($errstr, $errfile, $errline);
+	}
+
+	public static function handleException ($exception)
+	{
+		static::handle($exception->getMessage(), $exception->getFile(), $exception->getLine());
 	}
 
 	private static function handle ($message = "", $file = "", $line = 0)
@@ -41,6 +32,21 @@ final class debugger extends \exception
 			$error.= config::config("errorIgnoreMessage");
 		}
 		echo $error;
+	}
+
+	public static function throwException ($code = 0, $extra = "")
+	{
+		$exceptionMessage = static::fetchException($code, $extra);
+		throw new static($exceptionMessage, $code);
+	}
+
+	public static function fetchException ($code = 0 ,$extra = "")
+	{
+		$exceptionMessage = config::config("magtinyExceptions")[$code];
+		if ($extra) {
+			$exceptionMessage.= " [ ".$extra." ]";
+		}
+		return $exceptionMessage;
 	}
 }
 
